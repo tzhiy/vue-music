@@ -7,3 +7,5 @@
 + Vue
 + Vuex
 + Vue-Router
++ Scss
++ BetterScroll

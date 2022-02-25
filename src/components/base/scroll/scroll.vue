@@ -1,0 +1,29 @@
+<template>
+  <div ref="rootRef">
+    <slot></slot>
+  </div>
+</template>
+
+<script>
+import { ref } from '@vue/reactivity'
+import useScroll from './use-scroll'
+
+export default {
+  name: 'scroll',
+  // 对 scroll 的配置
+  props: {
+    click: {
+      type: Boolean,
+      default: true
+    }
+  },
+  setup(props) {
+    const rootRef = ref(null)
+    useScroll(rootRef, props)
+
+    return {
+      rootRef
+    }
+  }
+}
+</script>
