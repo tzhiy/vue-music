@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend" v-loading:[loadingText]="loading">
+  <div class="recommend" v-loading="loading">
     <scroll class="recommend-content">
       <!-- scroll 只对第一个元素生效，添加一个元素包裹 -->
       <div>
@@ -46,8 +46,7 @@ export default {
   data() {
     return {
       sliders: [],
-      albums: [],
-      loadingText: '正在载入...'
+      albums: []
     }
   },
   computed: {
