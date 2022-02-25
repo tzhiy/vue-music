@@ -13,7 +13,8 @@
           <ul>
             <li v-for="item in albums" class="item" :key="item.id">
               <div class="icon">
-                <img width="60" height="60" :src="item.pic" />
+                <!-- vue3-lazy 全局注册了一个 v-lazy 指令，实现图片懒加载效果 -->
+                <img width="60" height="60" v-lazy="item.pic" />
               </div>
               <div class="text">
                 <h2 class="name">
