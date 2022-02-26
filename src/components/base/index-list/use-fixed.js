@@ -1,6 +1,7 @@
 import { nextTick, ref, watch, computed } from 'vue'
 
 export default function useFixed(props) {
+  // data
   const TITLE_HEIGHT = 30
   const groupRef = ref(null) // 列表的引用
   const listHeights = ref([]) // 每一列上方的高度数组，从 0 开始，到最后一列的底部结束
@@ -8,6 +9,7 @@ export default function useFixed(props) {
   const currentIndex = ref(0) // 当前列表的索引
   const distance = ref(0) // 下一组距离顶部的距离
 
+  // computed
   // 当前的 title
   const fixedTitle = computed(() => {
     if (scrollY.value < 0) {
@@ -27,6 +29,7 @@ export default function useFixed(props) {
     }
   })
 
+  // watch
   watch(() => props.data, async () => {
     await nextTick() // nextTick 之后 dom 才发生变化
     calculate()
@@ -48,6 +51,7 @@ export default function useFixed(props) {
     }
   })
 
+  // methods
   // 计算列表每组的高度数组
   function calculate() {
     const list = groupRef.value.children // 获取列表的子元素

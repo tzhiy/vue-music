@@ -49,4 +49,10 @@
 
      使用 [BScroll 中的 scrollToElement 方法](https://better-scroll.github.io/docs/zh-CN/guide/base-scroll-api.html#scrolltoelement-el-time-offsetx-offsety-easing)
 
+   + 侧边导航栏的滑动跳转效果
+
+     通过求 touchstart 和 touchmove 的纵坐标差计算
+
+     处理边界情况
+
    
