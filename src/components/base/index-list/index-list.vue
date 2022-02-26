@@ -12,7 +12,7 @@
       </li>
     </ul>
     <!-- 顶部固定的标题 -->
-    <div class="fixed" v-show="fixedTitle">
+    <div class="fixed" v-show="fixedTitle" :style="fixedStyle">
       <div class="fixed-title">{{ fixedTitle }}</div>
     </div>
   </scroll>
@@ -34,11 +34,12 @@ export default {
     }
   },
   setup(props) {
-    const { groupRef, onScroll, fixedTitle } = useFixed(props)
+    const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
     return {
       groupRef,
       onScroll,
-      fixedTitle
+      fixedTitle,
+      fixedStyle
     }
   }
 }

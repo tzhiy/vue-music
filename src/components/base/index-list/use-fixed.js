@@ -1,13 +1,13 @@
 import { nextTick, ref, watch, computed } from 'vue'
 
 export default function useFixed(props) {
-  // data
+  const TITLE_HEIGHT = 30
   const groupRef = ref(null) // 列表的引用
   const listHeights = ref([]) // 每一列上方的高度数组，从 0 开始，到最后一列的底部结束
   const scrollY = ref(0) // 纵向滚动的值
   const currentIndex = ref(0) // 当前列表的索引
+  const distance = ref(0) // 下一组距离顶部的距离
 
-  // computed
   // 当前的 title
   const fixedTitle = computed(() => {
     if (scrollY.value < 0) {
@@ -17,7 +17,16 @@ export default function useFixed(props) {
     return currentGroup ? currentGroup.title : ''
   })
 
-  // watch
+  // 偏移样式
+  const fixedStyle = computed(() => {
+    const distanceVal = distance.value
+    const diff = (distanceVal > 0 && distanceVal < TITLE_HEIGHT)
+      ? distanceVal - TITLE_HEIGHT : 0 // 当前的偏移值
+    return {
+      transform: `translate3d(0,${diff}px,0) `
+    }
+  })
+
   watch(() => props.data, async () => {
     await nextTick() // nextTick 之后 dom 才发生变化
     calculate()
@@ -34,11 +43,11 @@ export default function useFixed(props) {
       // Y 落在当前列表的区间内
       if (newY >= heightTop && newY <= heightBottom) {
         currentIndex.value = i
+        distance.value = heightBottom - newY
       }
     }
   })
 
-  // methods
   // 计算列表每组的高度数组
   function calculate() {
     const list = groupRef.value.children // 获取列表的子元素
@@ -63,6 +72,7 @@ export default function useFixed(props) {
   return {
     groupRef,
     onScroll,
-    fixedTitle
+    fixedTitle,
+    fixedStyle
   }
 }
