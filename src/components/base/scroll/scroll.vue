@@ -15,11 +15,17 @@ export default {
     click: {
       type: Boolean,
       default: true
+    },
+    // 决定是否派发 scroll 事件，可获得当前滚动轴的位置
+    probeType: {
+      type: Number,
+      default: 0
     }
   },
-  setup(props) {
+  emits: ['scroll'],
+  setup(props, { emit }) {
     const rootRef = ref(null)
-    useScroll(rootRef, props)
+    useScroll(rootRef, props, emit)
 
     return {
       rootRef
