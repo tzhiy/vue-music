@@ -55,4 +55,9 @@
 
      处理边界情况
 
-   
+## 4 歌手详情页开发
+
+1. 获取歌手详情页数据
+
+   singer 数据传递：index-list.vue -> singer.vue -> singer-detail.vue
+
