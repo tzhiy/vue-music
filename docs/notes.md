@@ -45,4 +45,8 @@
 
    + 右侧导航栏样式
 
+   + 点击导航栏的字母转到对应的组
+
+     使用 [BScroll 中的 scrollToElement 方法](https://better-scroll.github.io/docs/zh-CN/guide/base-scroll-api.html#scrolltoelement-el-time-offsetx-offsety-easing)
+
    
