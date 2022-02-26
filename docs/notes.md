@@ -61,3 +61,5 @@
 
    singer 数据传递：index-list.vue -> singer.vue -> singer-detail.vue
 
+2. 获取歌手详情页歌曲 url
+
