@@ -98,5 +98,15 @@
 ## 5 播放器内核组件开发
 
 1. 基本样式和播放歌曲
+
 2. 播放按钮的暂停和播放逻辑
+
 3. 播放器前进与后退逻辑
+
+4. 播放器 DOM 异常
+
+   `DOMException: The play() request was interrupted by a new load request.`
+
+   歌曲资源没加载完全时，执行 play 或切换歌曲更新 src，导致报错
+
+   利用 canplay 事件判断歌曲是否加载完成，只有当加载完成才播放和切歌

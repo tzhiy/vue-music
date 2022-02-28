@@ -17,13 +17,13 @@
           <div class="icon i-left">
             <i class="icon-sequence"></i>
           </div>
-          <div class="icon i-left">
+          <div class="icon i-left" :class="disableCls">
             <i @click="prev" class="icon-prev"></i>
           </div>
-          <div class="icon i-center">
+          <div class="icon i-center" :class="disableCls">
             <i @click="togglePlay" :class="playIcon"></i>
           </div>
-          <div class="icon i-right">
+          <div class="icon i-right" :class="disableCls">
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
@@ -33,7 +33,14 @@
       </div>
     </div>
     <!-- pause 音频播放停止，电脑待机睡眠时触发 -->
-    <audio ref="audioRef" @pause="pause"></audio>
+    <!-- canplay 当音频加载结束时触发 -->
+    <!-- error 播放异常是触发 -->
+    <audio
+      ref="audioRef"
+      @pause="pause"
+      @canplay="ready"
+      @error="error"
+    ></audio>
   </div>
 </template>
 
@@ -45,6 +52,7 @@ export default {
   name: 'player',
   setup() {
     const audioRef = ref(null)
+    const songReady = ref(false)
 
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
@@ -57,16 +65,25 @@ export default {
       return playing.value ? 'icon-pause' : 'icon-play'
     })
 
+    const disableCls = computed(() => {
+      return songReady.value ? '' : 'disable'
+    })
+
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
       }
+      songReady.value = false
       const audioEl = audioRef.value
       audioEl.src = newSong.url
       audioEl.play()
     })
 
     watch(playing, (newPlaying) => {
+      // 只有当加载完成才播放
+      if (!songReady.value) {
+        return
+      }
       const audioEl = audioRef.value
       newPlaying ? audioEl.play() : audioEl.pause()
     })
@@ -76,6 +93,9 @@ export default {
     }
 
     function togglePlay() {
+      if (!songReady.value) {
+        return
+      }
       store.commit('setPlayingState', !playing.value)
     }
 
@@ -86,8 +106,8 @@ export default {
     function prev() {
       const list = playlist.value
 
-      // 如果没有歌，什么都不做
-      if (list.length === 0) {
+      // 如果歌单没有歌或当前歌曲没有加载完成，禁止前进
+      if (!songReady.value || list.length === 0) {
         return
       }
       // 如果只有一首歌，点击的时候重新播放
@@ -110,7 +130,7 @@ export default {
     function next() {
       const list = playlist.value
 
-      if (list.length === 0) {
+      if (!songReady.value || list.length === 0) {
         return
       }
       if (list.length === 1) {
@@ -133,6 +153,18 @@ export default {
       audioEl.play()
     }
 
+    function ready() {
+      if (songReady.value) {
+        return
+      }
+      songReady.value = true
+    }
+
+    function error() {
+      // 异常时防止无法点击
+      songReady.value = true
+    }
+
     return {
       fullScreen,
       currentSong,
@@ -142,7 +174,10 @@ export default {
       togglePlay,
       pause,
       prev,
-      next
+      next,
+      ready,
+      disableCls,
+      error
     }
   }
 }
