@@ -27,7 +27,7 @@ export default {
     pic() {
       return this.singer && this.singer.pic
     },
-    titile() {
+    title() {
       return this.singer && this.singer.name
     }
   },
