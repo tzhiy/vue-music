@@ -95,3 +95,6 @@
 
    使用 [knuth shuffle](https://www.rosettacode.org/wiki/Knuth_shuffle) 算法实现随机播放
 
+## 5 播放器内核组件开发
+
+1. 基本样式和播放歌曲
