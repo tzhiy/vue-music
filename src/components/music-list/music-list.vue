@@ -12,6 +12,7 @@
       class="list"
       :style="scrollStyle"
       v-loading="loading"
+      v-no-result="noResult"
       :probe-type="3"
       @scroll="onScroll"
     >
@@ -54,6 +55,9 @@ export default {
     }
   },
   computed: {
+    noResult() {
+      return !this.loading && !this.songs.length // 请求结束且列表为空
+    },
     bgImageStyle() {
       const scrollY = this.scrollY
       let zIndex = 0

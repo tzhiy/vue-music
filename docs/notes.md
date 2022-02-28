@@ -79,3 +79,9 @@
    + https://v3.cn.vuejs.org/guide/transitions-enterleave.html
    + https://router.vuejs.org/zh/guide/advanced/transitions.html
 
+6. 边界情况
+
+   返回的数据为空的情况，创建类 v-loading 指令：将相同的操作封装成一个函数，抽离成单独的文件
+
+   + 报错：不能移除不是子结点的结点
+
