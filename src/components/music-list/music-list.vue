@@ -87,6 +87,21 @@ export default {
       return {
         top: `${this.imageHeight}px`
       }
+    },
+    filterStyle() {
+      let blur = 0
+      // 使用变量缓存依赖的变量，优化性能，减少依赖搜集过程
+      const scrollY = this.scrollY
+      const imageHeight = this.imageHeight
+
+      // 向上推增加模糊效果
+      if (scrollY >= 0) {
+        blur =
+          Math.min(this.maxTranslateY / imageHeight, scrollY / imageHeight) * 20
+      }
+      return {
+        backdropFilter: `blur(${blur}px)`
+      }
     }
   },
   mounted() {
