@@ -87,3 +87,7 @@
    + 分析：由于在同一个元素上使用了 v-loading 和 v-no-result 两个指令，v-no-result 创建的实例会覆盖掉 v-loading 创建的实例赋值的 el.instance，导致 v-loading 想要移除元素时找不到自己的实例对应的元素。
    + 解决：将 el 添加一个维度，通过指令的名称来找到自己的实例对象
 
+7. 详情页点击
+
+   判断运行环境 `process.env.NODE_ENV !== 'production'` 后使用 vuex 插件 createLogger 查看 state 的更新情况
+
