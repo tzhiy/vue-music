@@ -91,3 +91,7 @@
 
    判断运行环境 `process.env.NODE_ENV !== 'production'` 后使用 vuex 插件 createLogger 查看 state 的更新情况
 
+8. 随机播放
+
+   使用 [knuth shuffle](https://www.rosettacode.org/wiki/Knuth_shuffle) 算法实现随机播放
+
