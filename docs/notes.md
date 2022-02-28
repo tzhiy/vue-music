@@ -73,3 +73,9 @@
 4. 详情页支持刷新
 
    进入页面时，组件获取传递的参数进行数据渲染，但是刷新时无法获得参数，所以需要将数据保存到浏览器的本地存储中，使用 sessionStorage
+
+5. 进入离开页面的过渡效果
+
+   + https://v3.cn.vuejs.org/guide/transitions-enterleave.html
+   + https://router.vuejs.org/zh/guide/advanced/transitions.html
+
