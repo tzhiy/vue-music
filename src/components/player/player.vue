@@ -18,13 +18,13 @@
             <i class="icon-sequence"></i>
           </div>
           <div class="icon i-left">
-            <i class="icon-prev"></i>
+            <i @click="prev" class="icon-prev"></i>
           </div>
-          <div class="icon i-center" @click="togglePlay">
-            <i :class="playIcon"></i>
+          <div class="icon i-center">
+            <i @click="togglePlay" :class="playIcon"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-next"></i>
+            <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
             <i class="icon-not-favorite"></i>
@@ -50,6 +50,8 @@ export default {
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
     const playing = computed(() => store.state.playing)
+    const currentIndex = computed(() => store.state.currentIndex)
+    const playlist = computed(() => store.state.playlist)
 
     const playIcon = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
@@ -81,6 +83,56 @@ export default {
       store.commit('setPlayingState', false)
     }
 
+    function prev() {
+      const list = playlist.value
+
+      // 如果没有歌，什么都不做
+      if (list.length === 0) {
+        return
+      }
+      // 如果只有一首歌，点击的时候重新播放
+      if (list.length === 1) {
+        loop()
+      } else {
+        let index = currentIndex.value - 1
+        // 如果减为 -1，则播放最后一首
+        if (index === -1) {
+          index = list.length - 1
+        }
+        store.commit('setCurrentIndex', index)
+        // 如果点击的时候是暂停状态，则播放音乐
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
+    function next() {
+      const list = playlist.value
+
+      if (list.length === 0) {
+        return
+      }
+      if (list.length === 1) {
+        loop()
+      } else {
+        let index = currentIndex.value + 1
+        if (index === list.length) {
+          index = 0
+        }
+        store.commit('setCurrentIndex', index)
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
+    function loop() {
+      const audioEl = audioRef.value
+      audioEl.currentTime = 0
+      audioEl.play()
+    }
+
     return {
       fullScreen,
       currentSong,
@@ -88,7 +140,9 @@ export default {
       goBack,
       playIcon,
       togglePlay,
-      pause
+      pause,
+      prev,
+      next
     }
   }
 }
