@@ -29,7 +29,7 @@ export function changeMode({ commit, state, getters }, mode) {
   } else {
     commit('setPlaylist', state.sequenceList)
   }
-  const index = state.playlist.find((song) => {
+  const index = state.playlist.findIndex((song) => {
     return song.id === currentId
   })
   commit('setCurrentIndex', index)

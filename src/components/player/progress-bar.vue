@@ -1,8 +1,14 @@
 <template>
-  <div class="progress-bar">
+  <div class="progress-bar" @click="onClick">
     <div class="bar-inner">
-      <div class="progress" :style="progressStyle"></div>
-      <div class="progress-btn-wrapper" :style="btnStyle">
+      <div class="progress" ref="progress" :style="progressStyle"></div>
+      <div
+        class="progress-btn-wrapper"
+        :style="btnStyle"
+        @touchstart.prevent="onTouchStart"
+        @touchmove.prevent="onTouchMove"
+        @touchend.prevent="onTouchEnd"
+      >
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -14,6 +20,7 @@ const progressBtnWidth = 16 // 按钮的宽度
 
 export default {
   name: 'progress-bar',
+  emits: ['progress-changing', 'progress-changed'],
   props: {
     // 已经播放的进度，范围 [0, 1]
     progress: {
@@ -39,6 +46,39 @@ export default {
       const barWidth = this.$el.clientWidth - progressBtnWidth // 总进度条的宽度
       // 若使用 computed，一开始未挂载无法获取 clientWidth
       this.offset = barWidth * newProgress
+    }
+  },
+  created() {
+    // 无需响应式，优化性能
+    this.touch = {} // 保存滑动信息
+  },
+  methods: {
+    onTouchStart(e) {
+      this.touch.x1 = e.touches[0].pageX
+      this.touch.beginWidth = this.$refs.progress.clientWidth // 进度条滑动前的宽度
+    },
+    onTouchMove(e) {
+      // 修改进度条
+      const delta = e.touches[0].pageX - this.touch.x1 // 横坐标偏移
+      const tempWidth = this.touch.beginWidth + delta // 滑动后的宽度
+      const barWidth = this.$el.clientWidth - progressBtnWidth // 进度条的总长度
+      const progress = Math.min(1, Math.max(0, tempWidth / barWidth))
+      this.offset = barWidth * progress // 计算出偏移量
+
+      // 修改播放进度
+      this.$emit('progress-changing', progress)
+    },
+    onTouchEnd() {
+      const barWidth = this.$el.clientWidth - progressBtnWidth // 进度条的总长度
+      const progress = this.$refs.progress.clientWidth / barWidth
+      this.$emit('progress-changed', progress)
+    },
+    onClick(e) {
+      const rect = this.$el.getBoundingClientRect()
+      const offsetWidth = e.pageX - rect.left // 进度条偏移距离
+      const barWidth = this.$el.clientWidth - progressBtnWidth // 进度条的总长度
+      const progress = offsetWidth / barWidth
+      this.$emit('progress-changed', progress)
     }
   }
 }

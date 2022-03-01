@@ -13,15 +13,21 @@
       </div>
       <!-- 底部操作面板 -->
       <div class="bottom">
+        <!-- 进度条 -->
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
-            <progress-bar :progress="progress"></progress-bar>
+            <progress-bar
+              :progress="progress"
+              @progress-changing="onProgressChanging"
+              @progress-changed="onProgressChanged"
+            ></progress-bar>
           </div>
           <span class="time time-r">{{
             formatTime(currentSong.duration)
           }}</span>
         </div>
+        <!-- 切歌操作 -->
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -48,12 +54,14 @@
     <!-- canplay 当音频加载结束时触发 -->
     <!-- error 播放异常时触发 -->
     <!-- timeupdate 播放时触发，可获取播放时间 -->
+    <!-- ended 播放完触发 -->
     <audio
       ref="audioRef"
       @pause="pause"
       @canplay="ready"
       @error="error"
       @timeupdate="updateTime"
+      @ended="end"
     ></audio>
   </div>
 </template>
@@ -65,6 +73,7 @@ import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import ProgressBar from './progress-bar'
 import { formatTime } from '@/assets/js/util'
+import { PLAY_MODE } from '@/assets/js/constant'
 
 export default {
   name: 'player',
@@ -76,6 +85,7 @@ export default {
     const audioRef = ref(null)
     const songReady = ref(false)
     const currentTime = ref(0) // 当前歌曲播放时长
+    let progressChanging = false
 
     // vuex
     const store = useStore()
@@ -84,6 +94,7 @@ export default {
     const playing = computed(() => store.state.playing)
     const currentIndex = computed(() => store.state.currentIndex)
     const playlist = computed(() => store.state.playlist)
+    const playMode = computed(() => store.state.playMode)
 
     // hooks
     const { modeIcon, changeMode } = useMode()
@@ -183,10 +194,13 @@ export default {
       }
     }
 
+    // 循环播放
     function loop() {
+      debugger
       const audioEl = audioRef.value
       audioEl.currentTime = 0
       audioEl.play()
+      store.commit('setPlayingState', true)
     }
 
     function ready() {
@@ -202,7 +216,36 @@ export default {
     }
 
     function updateTime(e) {
-      currentTime.value = e.target.currentTime
+      // 没有滑动时才改变播放时间
+      if (!progressChanging) {
+        currentTime.value = e.target.currentTime
+      }
+    }
+
+    // 滑动过程中只改变进度条和时间
+    function onProgressChanging(progress) {
+      progressChanging = true
+      currentTime.value = currentSong.value.duration * progress
+    }
+
+    // 松手后改变歌曲播放时间点
+    function onProgressChanged(progress) {
+      currentTime.value = currentSong.value.duration * progress
+      audioRef.value.currentTime = currentTime.value
+      // 如果暂停则改为播放
+      if (!playing.value) {
+        store.commit('setPlayingState', true)
+      }
+      progressChanging = false
+    }
+
+    function end() {
+      currentTime.value = 0
+      if (playMode.value === PLAY_MODE.loop) {
+        loop() // 循环
+      } else {
+        next() // 播放下一首
+      }
     }
 
     return {
@@ -222,6 +265,9 @@ export default {
       currentTime,
       updateTime,
       formatTime,
+      onProgressChanging,
+      onProgressChanged,
+      end,
       // mode
       modeIcon,
       changeMode,
