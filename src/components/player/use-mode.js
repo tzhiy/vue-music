@@ -1,3 +1,4 @@
+// 模式切换
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { PLAY_MODE } from '@/assets/js/constant'
