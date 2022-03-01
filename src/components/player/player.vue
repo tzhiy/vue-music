@@ -13,6 +13,15 @@
       </div>
       <!-- 底部操作面板 -->
       <div class="bottom">
+        <div class="progress-wrapper">
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar :progress="progress"></progress-bar>
+          </div>
+          <span class="time time-r">{{
+            formatTime(currentSong.duration)
+          }}</span>
+        </div>
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -37,12 +46,14 @@
     </div>
     <!-- pause 音频播放停止，电脑待机睡眠时触发 -->
     <!-- canplay 当音频加载结束时触发 -->
-    <!-- error 播放异常是触发 -->
+    <!-- error 播放异常时触发 -->
+    <!-- timeupdate 播放时触发，可获取播放时间 -->
     <audio
       ref="audioRef"
       @pause="pause"
       @canplay="ready"
       @error="error"
+      @timeupdate="updateTime"
     ></audio>
   </div>
 </template>
@@ -52,13 +63,19 @@ import { computed, watch, ref } from 'vue'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import ProgressBar from './progress-bar'
+import { formatTime } from '@/assets/js/util'
 
 export default {
   name: 'player',
+  components: {
+    ProgressBar
+  },
   setup() {
     // data
     const audioRef = ref(null)
     const songReady = ref(false)
+    const currentTime = ref(0) // 当前歌曲播放时长
 
     // vuex
     const store = useStore()
@@ -81,11 +98,16 @@ export default {
       return songReady.value ? '' : 'disable'
     })
 
+    const progress = computed(() => {
+      return currentTime.value / currentSong.value.duration
+    })
+
     // watch
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
       }
+      currentTime.value = 0 // 切歌时，播放时间置 0
       songReady.value = false
       const audioEl = audioRef.value
       audioEl.src = newSong.url
@@ -179,6 +201,10 @@ export default {
       songReady.value = true
     }
 
+    function updateTime(e) {
+      currentTime.value = e.target.currentTime
+    }
+
     return {
       fullScreen,
       currentSong,
@@ -192,6 +218,10 @@ export default {
       ready,
       disableCls,
       error,
+      progress,
+      currentTime,
+      updateTime,
+      formatTime,
       // mode
       modeIcon,
       changeMode,
