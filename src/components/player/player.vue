@@ -14,7 +14,7 @@
       <!-- 中间唱片部分和歌词部分 -->
       <div class="middle">
         <!-- 唱片部分 -->
-        <div class="middle-l">
+        <div class="middle-l" v-show="false">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img
@@ -26,6 +26,22 @@
             </div>
           </div>
         </div>
+        <!-- 歌词部分 -->
+        <scroll class="middle-r" ref="lyricScrollRef">
+          <div class="lyric-wrapper">
+            <div v-if="currentLyric" ref="lyricListRef">
+              <!-- currentLyric.lines 解析后的歌词数组 -->
+              <p
+                class="text"
+                :class="{ current: currentLineNum === index }"
+                v-for="(line, index) in currentLyric.lines"
+                :key="line.num"
+              >
+                {{ line.txt }}
+              </p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <!-- 底部操作面板 -->
       <div class="bottom">
@@ -92,11 +108,13 @@ import ProgressBar from './progress-bar'
 import { formatTime } from '@/assets/js/util'
 import { PLAY_MODE } from '@/assets/js/constant'
 import useCd from './use-cd'
+import Scroll from '../base/scroll/scroll.vue'
 
 export default {
   name: 'player',
   components: {
-    ProgressBar
+    ProgressBar,
+    Scroll
   },
   setup() {
     // data
@@ -118,7 +136,17 @@ export default {
     const { modeIcon, changeMode } = useMode()
     const { getFavoriteSong, toggleFavorite } = useFavorite()
     const { cdCls, cdRef, cdImageRef } = useCd()
-    useLyric()
+    const {
+      currentLyric,
+      currentLineNum,
+      playLyric,
+      lyricScrollRef,
+      lyricListRef,
+      stopLyric
+    } = useLyric({
+      songReady,
+      currentTime
+    })
 
     // computed
     const playIcon = computed(() => {
@@ -151,7 +179,13 @@ export default {
         return
       }
       const audioEl = audioRef.value
-      newPlaying ? audioEl.play() : audioEl.pause()
+      if (newPlaying) {
+        audioEl.play()
+        playLyric()
+      } else {
+        audioEl.pause()
+        stopLyric()
+      }
     })
 
     // methods
@@ -228,6 +262,9 @@ export default {
         return
       }
       songReady.value = true
+      // 保证 ready 成功时都可以触发歌词播放
+      // 即歌词和音频都加载完成后，则触发 playLyric，无论谁先谁后
+      playLyric()
     }
 
     function error() {
@@ -246,6 +283,8 @@ export default {
     function onProgressChanging(progress) {
       progressChanging = true
       currentTime.value = currentSong.value.duration * progress
+      playLyric() // 歌词同步到当前滑动位置
+      stopLyric() // 停止歌词播放
     }
 
     // 松手后改变歌曲播放时间点
@@ -257,6 +296,7 @@ export default {
         store.commit('setPlayingState', true)
       }
       progressChanging = false
+      playLyric() // 歌词同步到当前滑动位置
     }
 
     function end() {
@@ -297,7 +337,12 @@ export default {
       // cd
       cdCls,
       cdRef,
-      cdImageRef
+      cdImageRef,
+      // lyric
+      currentLyric,
+      currentLineNum,
+      lyricScrollRef,
+      lyricListRef
     }
   }
 }
@@ -393,6 +438,33 @@ export default {
             .playing {
               animation: rotate 20s linear infinite;
             }
+          }
+        }
+      }
+      .middle-r {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        .lyric-wrapper {
+          width: 80%;
+          margin: 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .text {
+            line-height: 32px;
+            color: $color-text-l;
+            font-size: $font-size-medium;
+            &.current {
+              color: $color-text;
+            }
+          }
+          .pure-music {
+            padding-top: 50%;
+            line-height: 32px;
+            color: $color-text-l;
+            font-size: $font-size-medium;
           }
         }
       }
