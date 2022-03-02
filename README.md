@@ -24,7 +24,7 @@ npm run serve
 
 ## 应用截图
 
-<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/087406ca57c54ca3a6691225a0b2b976~tplv-k3u1fbpfcp-watermark.image?" alt="singer.png" style="zoom: 25%;" /><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/825603c54c2b4501ab7e5f4bcf2c47dd~tplv-k3u1fbpfcp-watermark.image?" alt="player.png" style="zoom: 25%;" /><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c6387b9eba945419216819f3c01e0da~tplv-k3u1fbpfcp-watermark.image?" alt="lyric.png" style="zoom: 25%;" />
+<img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/087406ca57c54ca3a6691225a0b2b976~tplv-k3u1fbpfcp-watermark.image?" alt="singer.png" width="292" height="633" /><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/825603c54c2b4501ab7e5f4bcf2c47dd~tplv-k3u1fbpfcp-watermark.image?" alt="player.png" width="292" height="633" /><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6c6387b9eba945419216819f3c01e0da~tplv-k3u1fbpfcp-watermark.image?" alt="lyric.png" width="292" height="633" />
 
 ## 开发说明
 
