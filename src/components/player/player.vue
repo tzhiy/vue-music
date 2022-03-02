@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playlist.length">
     <div class="normal-player" v-show="fullScreen">
       <div class="background">
         <img :src="currentSong.pic" />
@@ -100,6 +100,7 @@
         </div>
       </div>
     </div>
+    <mini-player />
     <!-- pause 音频播放停止，电脑待机睡眠时触发 -->
     <!-- canplay 当音频加载结束时触发 -->
     <!-- error 播放异常时触发 -->
@@ -128,12 +129,14 @@ import { PLAY_MODE } from '@/assets/js/constant'
 import useCd from './use-cd'
 import Scroll from '../base/scroll/scroll.vue'
 import useMiddleInteractive from './use-middle-interactive'
+import MiniPlayer from './mini-player'
 
 export default {
   name: 'player',
   components: {
     ProgressBar,
-    Scroll
+    Scroll,
+    MiniPlayer
   },
   setup() {
     // data
@@ -358,6 +361,7 @@ export default {
       onProgressChanging,
       onProgressChanged,
       end,
+      playlist,
       // mode
       modeIcon,
       changeMode,
