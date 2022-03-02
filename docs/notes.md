@@ -150,12 +150,8 @@
 11. 迷你播放器
 
     + 点击展开播放器
-
     + 底部 cd 转动
-
-    + 进度条组件 svg
-
-      `stroke-dasharray` 圆的周长，`stroke-dashoffset` 圆的偏移
-
+    + 进度条组件 svg：`stroke-dasharray` 圆的周长，`stroke-dashoffset` 圆的偏移
     + 点击播放暂停
+    + 修复在播放器界面外点击暂停时进度条异常的 bug
 

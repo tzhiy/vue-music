@@ -43,9 +43,7 @@ export default {
   },
   watch: {
     progress(newProgress) {
-      const barWidth = this.$el.clientWidth - progressBtnWidth // 总进度条的宽度
-      // 若使用 computed，一开始未挂载无法获取 clientWidth
-      this.offset = barWidth * newProgress
+      this.setOffset(newProgress)
     }
   },
   created() {
@@ -79,6 +77,10 @@ export default {
       const barWidth = this.$el.clientWidth - progressBtnWidth // 进度条的总长度
       const progress = offsetWidth / barWidth
       this.$emit('progress-changed', progress)
+    },
+    setOffset(progress) {
+      const barWidth = this.$el.clientWidth - progressBtnWidth
+      this.offset = barWidth * progress
     }
   }
 }
