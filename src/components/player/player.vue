@@ -12,9 +12,14 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <!-- 中间唱片部分和歌词部分 -->
-      <div class="middle">
+      <div
+        class="middle"
+        @touchstart.prevent="onMiddleTouchStart"
+        @touchmove.prevent="onMiddleTouchMove"
+        @touchend.prevent="onMiddleTouchEnd"
+      >
         <!-- 唱片部分 -->
-        <div class="middle-l">
+        <div class="middle-l" :style="middleLStyle">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img
@@ -31,7 +36,7 @@
           </div>
         </div>
         <!-- 歌词部分 -->
-        <scroll class="middle-r" ref="lyricScrollRef">
+        <scroll class="middle-r" ref="lyricScrollRef" :style="middleRStyle">
           <div class="lyric-wrapper">
             <div v-if="currentLyric" ref="lyricListRef">
               <!-- currentLyric.lines 解析后的歌词数组 -->
@@ -53,6 +58,11 @@
       </div>
       <!-- 底部操作面板 -->
       <div class="bottom">
+        <!-- 底部滑动圆点 -->
+        <div class="dot-wrapper">
+          <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+          <span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
+        </div>
         <!-- 进度条 -->
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
@@ -117,6 +127,7 @@ import { formatTime } from '@/assets/js/util'
 import { PLAY_MODE } from '@/assets/js/constant'
 import useCd from './use-cd'
 import Scroll from '../base/scroll/scroll.vue'
+import useMiddleInteractive from './use-middle-interactive'
 
 export default {
   name: 'player',
@@ -157,6 +168,15 @@ export default {
       songReady,
       currentTime
     })
+
+    const {
+      currentShow,
+      middleLStyle,
+      middleRStyle,
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd
+    } = useMiddleInteractive()
 
     // computed
     const playIcon = computed(() => {
@@ -354,7 +374,14 @@ export default {
       lyricScrollRef,
       lyricListRef,
       pureMusicLyric,
-      playingLyric
+      playingLyric,
+      // middle
+      currentShow,
+      middleLStyle,
+      middleRStyle,
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd
     }
   }
 }

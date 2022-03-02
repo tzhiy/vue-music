@@ -91,9 +91,9 @@ export default function useLyric({ songReady, currentTime }) {
       return
     }
 
-    // 大于 7 行，则开始滚动
-    if (lineNum > 7) {
-      const lineEl = listEl.children[lineNum - 7]
+    // 大于 6 行，则开始滚动
+    if (lineNum > 6) {
+      const lineEl = listEl.children[lineNum - 6]
       scrollComp.scroll.scrollToElement(lineEl, 1000)
     } else {
       scrollComp.scroll.scrollTo(0, 0, 1000)
