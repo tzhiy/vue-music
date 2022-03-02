@@ -15,14 +15,29 @@ export default function useMiddleInteractive() {
   // 滑动操作的回调
   function onMiddleTouchStart(e) {
     touch.startX = e.touches[0].pageX
+    touch.startY = e.touches[0].pageY
+    touch.directionLocked = '' // 方向锁，防止斜着滑动
   }
 
   function onMiddleTouchMove(e) {
     const deltaX = e.touches[0].pageX - touch.startX // 滑动距离
-    const left = currentView === 'cd' ? 0 : -window.innerWidth // 根据当前的视图确定 lyric 偏移的初始值
+    const deltaY = e.touches[0].pageY - touch.startY
 
+    const absDeltaX = Math.abs(deltaX)
+    const absDeltaY = Math.abs(deltaY)
+
+    // 没有锁就设置锁
+    if (!touch.directionLocked) {
+      touch.directionLocked = absDeltaX >= absDeltaY ? 'h' : 'v' // 锁住偏移量小的方向
+    }
+
+    // 如果是水平锁，不进行切换，直接返回
+    if (touch.directionLocked === 'v') {
+      return
+    }
+
+    const left = currentView === 'cd' ? 0 : -window.innerWidth // 根据当前的视图确定 lyric 偏移的初始值
     const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX)) // lyric 视图最终滑动的位移
-    console.log(offsetWidth)
     touch.percent = Math.abs(offsetWidth / window.innerWidth) // 滑动距离占屏幕宽度的比例
 
     // 根据滑动比例决定显示的视图
