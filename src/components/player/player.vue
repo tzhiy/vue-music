@@ -14,7 +14,7 @@
       <!-- 中间唱片部分和歌词部分 -->
       <div class="middle">
         <!-- 唱片部分 -->
-        <div class="middle-l" v-show="false">
+        <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img
@@ -24,6 +24,10 @@
                 :src="currentSong.pic"
               />
             </div>
+          </div>
+          <!-- 正在播放的歌词 -->
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">{{ playingLyric }}</div>
           </div>
         </div>
         <!-- 歌词部分 -->
@@ -39,6 +43,10 @@
               >
                 {{ line.txt }}
               </p>
+            </div>
+            <!-- 纯音乐情况 -->
+            <div class="pure-music" v-show="pureMusicLyric">
+              <p>{{ pureMusicLyric }}</p>
             </div>
           </div>
         </scroll>
@@ -142,7 +150,9 @@ export default {
       playLyric,
       lyricScrollRef,
       lyricListRef,
-      stopLyric
+      stopLyric,
+      pureMusicLyric,
+      playingLyric
     } = useLyric({
       songReady,
       currentTime
@@ -342,7 +352,9 @@ export default {
       currentLyric,
       currentLineNum,
       lyricScrollRef,
-      lyricListRef
+      lyricListRef,
+      pureMusicLyric,
+      playingLyric
     }
   }
 }
@@ -438,6 +450,18 @@ export default {
             .playing {
               animation: rotate 20s linear infinite;
             }
+          }
+        }
+        .playing-lyric-wrapper {
+          width: 80%;
+          margin: 30px auto 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .playing-lyric {
+            height: 20px;
+            line-height: 20px;
+            font-size: $font-size-medium;
+            color: $color-text-l;
           }
         }
       }

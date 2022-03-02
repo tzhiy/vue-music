@@ -7,6 +7,8 @@ import Lyric from 'lyric-parser' // 歌词解析
 export default function useLyric({ songReady, currentTime }) {
   const currentLyric = ref(null)
   const currentLineNum = ref(0)
+  const pureMusicLyric = ref('')
+  const playingLyric = ref('')
   const lyricScrollRef = ref(null)
   const lyricListRef = ref(null)
 
@@ -23,6 +25,8 @@ export default function useLyric({ songReady, currentTime }) {
     stopLyric()
     currentLyric.value = null
     currentLineNum.value = 0
+    pureMusicLyric.value = ''
+    playingLyric.value = ''
 
     const date1 = new Date()
     const lyric = await getLyric(newSong)
@@ -37,10 +41,17 @@ export default function useLyric({ songReady, currentTime }) {
 
     currentLyric.value = new Lyric(lyric, handleLyric)
 
-    // 歌词获取成功后音频已经 ready 可播放歌词
-    // 或歌词获取成功后等音频 ready 再触发歌词播放（在 player.vue 中）
-    if (songReady.value) {
-      playLyric()
+    // 根据解析的 lines 长度判断是否有歌词
+    const hasLyric = currentLyric.value.lines.length
+    if (hasLyric) {
+      // 歌词获取成功后音频已经 ready 可播放歌词
+      // 或歌词获取成功后等音频 ready 再触发歌词播放（在 player.vue 中）
+      if (songReady.value) {
+        playLyric()
+      }
+    } else {
+      // 获取纯音乐的显示内容
+      playingLyric.value = pureMusicLyric.value = lyric.replace(/\[(\d{2}):(\d{2}):(\d{2})\]/g, '')
     }
 
     console.log(lyric)
@@ -63,10 +74,12 @@ export default function useLyric({ songReady, currentTime }) {
     }
   }
 
-  // 歌词每行切换时执行
-  function handleLyric({ lineNum }) {
+  // 歌词每行切换时执行，lineNum 当前行数，txt当前文案
+  function handleLyric({ lineNum, txt }) {
     // 更新行号
     currentLineNum.value = lineNum
+    // 更新正在播放的歌词
+    playingLyric.value = txt
 
     // 后缀 -Comp 表示组件
     const scrollComp = lyricScrollRef.value
@@ -93,6 +106,8 @@ export default function useLyric({ songReady, currentTime }) {
     playLyric,
     lyricScrollRef,
     lyricListRef,
-    stopLyric
+    stopLyric,
+    pureMusicLyric,
+    playingLyric
   }
 }
