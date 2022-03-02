@@ -12,9 +12,18 @@
           />
         </div>
       </div>
-      <div>
+      <div class="slider-wrapper">
         <h2 class="name">{{ currentSong.name }}</h2>
         <p class="desc">{{ currentSong.singer }}</p>
+      </div>
+      <div class="control">
+        <progress-circle :radius="32" :progress="progress">
+          <i
+            class="icon-mini"
+            :class="miniPlayIcon"
+            @click.stop="togglePlay"
+          ></i>
+        </progress-circle>
       </div>
     </div>
   </transition>
@@ -24,13 +33,31 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import useCd from './use-cd'
+import progressCircle from './progress-circle.vue'
 
 export default {
   name: 'mini-player',
+  components: {
+    progressCircle
+  },
+  props: {
+    progress: {
+      type: Number,
+      default: 0
+    },
+    togglePlay: {
+      type: Function
+    }
+  },
   setup() {
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
+    const playing = computed(() => store.state.playing)
+
+    const miniPlayIcon = computed(() => {
+      return playing.value ? 'icon-play-mini' : 'icon-pause-mini'
+    })
 
     const { cdCls, cdRef, cdImageRef } = useCd()
 
@@ -42,6 +69,7 @@ export default {
       fullScreen,
       currentSong,
       showNormalPlayer,
+      miniPlayIcon,
       // cd
       cdCls,
       cdRef,
@@ -81,16 +109,24 @@ export default {
       }
     }
   }
-  .name {
-    margin-bottom: 2px;
-    @include no-wrap();
-    font-size: $font-size-medium;
-    color: $color-text;
-  }
-  .desc {
-    @include no-wrap();
-    font-size: $font-size-small;
-    color: $color-text-d;
+  .slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    line-height: 20px;
+    overflow: hidden;
+    .name {
+      margin-bottom: 2px;
+      @include no-wrap();
+      font-size: $font-size-medium;
+      color: $color-text;
+    }
+    .desc {
+      @include no-wrap();
+      font-size: $font-size-small;
+      color: $color-text-d;
+    }
   }
   .control {
     flex: 0 0 30px;

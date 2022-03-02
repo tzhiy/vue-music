@@ -100,7 +100,7 @@
         </div>
       </div>
     </div>
-    <mini-player />
+    <mini-player :progress="progress" :toggle-play="togglePlay"></mini-player>
     <!-- pause 音频播放停止，电脑待机睡眠时触发 -->
     <!-- canplay 当音频加载结束时触发 -->
     <!-- error 播放异常时触发 -->
